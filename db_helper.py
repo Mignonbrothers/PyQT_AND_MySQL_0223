@@ -39,3 +39,30 @@ class DB:
                 print(f"진짜 에러 원인: {e}")
                 conn.rollback()
                 return False
+
+    def modify_member(self,price, num, name):
+        sql = "UPDATE item SET price=%s, num=%s WHERE name=%s"
+        with self.connect() as conn:
+            try:
+                with conn.cursor() as cur:
+                    cur.execute(sql, (price, num, name))
+                conn.commit()
+                return True
+            except Exception as e:
+                print(f"진짜 에러 원인: {e}")
+                conn.rollback()
+                return False
+
+
+    def err_member(self, name):
+        sql = "DELETE FROM item WHERE name=%s"
+        with self.connect() as conn:
+            try:
+                with conn.cursor() as cur:
+                    cur.execute(sql, name)
+                conn.commit()
+                return True
+            except Exception as e:
+                print(f"진짜 에러 원인: {e}")
+                conn.rollback()
+                return False

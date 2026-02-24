@@ -6,7 +6,7 @@ from db_helper import DB, DB_CONFIG
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("회원 관리")
+        self.setWindowTitle("성심당 상품 관리")
         self.db = DB(**DB_CONFIG)
 
         # 중앙 위젯 및 레이아웃
@@ -32,10 +32,17 @@ class MainWindow(QMainWindow):
 
         # 기존 코드 아래에 추가
         self.btn_update = QPushButton("수정")  # 1. 버튼 객체 생성
-        #self.btn_update.clicked.connect(self.update_member)  # 2. 클릭 시 실행할 함수 연결
+        self.btn_update.clicked.connect(self.update_member)  # 2. 클릭 시 실행할 함수 연결
 
         # 레이아웃(form_box)의 맨 마지막에 버튼 추가
         form_box.addWidget(self.btn_update)
+
+        self.btn_delete = QPushButton("삭제")
+        self.btn_delete.clicked.connect(self.delete_member)
+
+        # 레이아웃(form_box)의 맨 마지막에 버튼 추가
+        form_box.addWidget(self.btn_delete)
+
 
         # 중앙: 테이블 위젯
         self.table = QTableWidget()
@@ -81,6 +88,40 @@ class MainWindow(QMainWindow):
             self.input_name.clear()
             self.input_price.clear()
             self.input_num.clear()
+            self.load_members()
+        else:
+            QMessageBox.critical(self, "실패", "추가 중 오류가 발생했습니다.")
+
+
+    def update_member(self):
+        name = self.input_name.text().strip()
+        price = self.input_price.text().strip()
+        num = self.input_num.text().strip()
+
+        price_int = int(price)
+        num_int = int(num)
+
+        ok = self.db.modify_member(price_int, num_int, name)
+        if ok:
+            QMessageBox.information(self, "완료", "수정되었습니다.")
+            self.input_name.clear()
+            self.input_price.clear()
+            self.input_num.clear()
+            self.load_members()
+        else:
+            QMessageBox.critical(self, "실패", "추가 중 오류가 발생했습니다.")
+
+
+    def delete_member(self):
+        name = self.input_name.text().strip()
+        price = self.input_price.text().strip()
+        num = self.input_num.text().strip()
+
+
+        ok = self.db.err_member(name)
+        if ok:
+            QMessageBox.information(self, "완료", "삭제되었습니다.")
+            #self.input_name.clear()
             self.load_members()
         else:
             QMessageBox.critical(self, "실패", "추가 중 오류가 발생했습니다.")
