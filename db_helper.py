@@ -17,6 +17,14 @@ class DB:
         return pymysql.connect(**self.config)
 
 
+    # 로그인 검증
+    def verify_user(self, username, password):
+        sql = "SELECT COUNT(*) FROM users WHERE username=%s AND password=%s"
+        with self.connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute(sql, (username, password))
+                count, = cur.fetchone()
+                return count == 1
 
     # 멤버 전체 조회
     def fetch_members(self):
