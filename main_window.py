@@ -1,12 +1,15 @@
 # main_window.py
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QTableWidget, QTableWidgetItem, \
-    QLabel, QLineEdit, QPushButton, QMessageBox
+    QLabel, QLineEdit, QPushButton, QMessageBox, QHeaderView
 from db_helper import DB, DB_CONFIG
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("성심당 상품 관리")
+
+        self.resize(800, 600)
+
         self.db = DB(**DB_CONFIG)
 
         # 중앙 위젯 및 레이아웃
@@ -30,17 +33,18 @@ class MainWindow(QMainWindow):
         form_box.addWidget(self.input_num)
         form_box.addWidget(self.btn_add)
 
-        # 기존 코드 아래에 추가
+        # 수정
         self.btn_update = QPushButton("수정")  # 1. 버튼 객체 생성
         self.btn_update.clicked.connect(self.update_member)  # 2. 클릭 시 실행할 함수 연결
 
-        # 레이아웃(form_box)의 맨 마지막에 버튼 추가
+        # 수정 버튼 추가
         form_box.addWidget(self.btn_update)
 
+        # 삭제
         self.btn_delete = QPushButton("삭제")
         self.btn_delete.clicked.connect(self.delete_member)
 
-        # 레이아웃(form_box)의 맨 마지막에 버튼 추가
+        # 삭제 버튼 추가
         form_box.addWidget(self.btn_delete)
 
 
@@ -50,7 +54,7 @@ class MainWindow(QMainWindow):
         self.table.setHorizontalHeaderLabels(["ID", "상품이름", "가격", "재고"])
         self.table.setEditTriggers(self.table.NoEditTriggers)  # 표준 예시: 목록은 읽기 전용
         self.table.verticalHeader().setVisible(False)
-
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         # 배치
         vbox.addLayout(form_box)
@@ -68,7 +72,7 @@ class MainWindow(QMainWindow):
             self.table.setItem(r, 1, QTableWidgetItem(name))
             self.table.setItem(r, 2, QTableWidgetItem(str(price)))
             self.table.setItem(r, 3, QTableWidgetItem(str(num)))
-        self.table.resizeColumnsToContents()
+        # self.table.resizeColumnsToContents()
 
     def add_member(self):
         name = self.input_name.text().strip()

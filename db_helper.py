@@ -48,6 +48,7 @@ class DB:
                 conn.rollback()
                 return False
 
+    # 멤버 수정
     def modify_member(self,price, num, name):
         sql = "UPDATE item SET price=%s, num=%s WHERE name=%s"
         with self.connect() as conn:
@@ -61,7 +62,7 @@ class DB:
                 conn.rollback()
                 return False
 
-
+    # 멤버 삭제
     def err_member(self, name):
         sql = "DELETE FROM item WHERE name=%s"
         with self.connect() as conn:
