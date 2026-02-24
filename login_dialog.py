@@ -5,6 +5,7 @@ from db_helper import DB, DB_CONFIG
 class LoginDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.setStyleSheet("QDialog { background-color: #F5E6CC; }")
         self.setWindowTitle("로그인")
         self.db = DB(**DB_CONFIG)
 
@@ -23,6 +24,8 @@ class LoginDialog(QDialog):
         layout.addLayout(form)
         layout.addWidget(self.btn_login)
         self.setLayout(layout)
+
+
 
     def try_login(self):
         uid = self.username.text().strip()

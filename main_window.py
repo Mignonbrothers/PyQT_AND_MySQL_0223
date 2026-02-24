@@ -2,19 +2,51 @@
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QTableWidget, QTableWidgetItem, \
     QLabel, QLineEdit, QPushButton, QMessageBox, QHeaderView
 from db_helper import DB, DB_CONFIG
+from PyQt5.QtGui import QPixmap, QIcon # 상단에 추가
+from PyQt5.QtCore import Qt  # 이 줄을 추가하세요!
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("성심당 상품 관리")
+        self.setWindowIcon(QIcon("bread.png"))
 
         self.resize(800, 600)
 
         self.db = DB(**DB_CONFIG)
 
+        # 1. 이미지와 텍스트를 가로로 묶을 레이아웃 생성
+        info_layout = QHBoxLayout()
+
+        # 2. 왼쪽: 이미지 설정 (sung.png)
+        self.logo_label = QLabel()
+        pixmap = QPixmap("sung.png")
+        pixmap = pixmap.scaledToWidth(300, Qt.SmoothTransformation)
+        self.logo_label.setPixmap(pixmap)
+        self.logo_label.setAlignment(Qt.AlignLeft | Qt.AlignTop) # 왼쪽 + 세로 중앙 정렬
+        info_layout.addWidget(self.logo_label, alignment=Qt.AlignTop)
+
+        # 4. 이미지와 텍스트가 왼쪽으로 붙도록 뒤에 빈 공간(Stretch) 추가
+        info_layout.addStretch(1)
+
+        # 3. 오른쪽: 주의사항 텍스트 라벨 생성
+        self.notice_label = QLabel(
+            "⚠️ [재고 관리 주의사항]\n\n"
+            "• 상품명을 기준으로 추가, 수정, 삭제가 이루어집니다.\n"
+            "• 가격과 재고는 반드시 '숫자'만 입력해 주세요.\n"
+            "• 메뉴가 품절된 경우 재고를 0으로 수정해 주세요.\n"
+            "• 메뉴를 삭제하는 경우 '상품이름'만 입력해 주세요."
+        )
+        # 텍스트 색상을 갈색(#5D4037)으로 설정하고 여백을 줌
+        self.notice_label.setStyleSheet("color: #5D4037; font-size: 11pt; padding-left: 20px; margin-top: 10px;")
+        #self.notice_label.setAlignment(Qt.AlignRight | Qt.AlignTop)  # 텍스트 자체도 오른쪽 위 정렬
+        info_layout.addWidget(self.notice_label, alignment=Qt.AlignTop)
+
+
         # 중앙 위젯 및 레이아웃
         central = QWidget()
         self.setCentralWidget(central)
+        self.setStyleSheet("QMainWindow { background-color: #F5E6CC; }")
         vbox = QVBoxLayout(central)
 
         # 상단: 입력 폼 + 추가 버튼
@@ -57,6 +89,7 @@ class MainWindow(QMainWindow):
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         # 배치
+        vbox.addLayout(info_layout)
         vbox.addLayout(form_box)
         vbox.addWidget(self.table)
 
